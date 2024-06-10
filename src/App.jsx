@@ -15,64 +15,58 @@ export class App extends Component {
   }
   //functions and user passed down thru props so state is accessible and changeable anywhere
   handleUserLogin=async (userObj, savedArr)=>{
-    try {
-      const user={...userObj, saved: savedArr}
-      this.setState({user})
-    } catch (error) {
-      console.log(error)
-    }
-    
+    console.log(userObj, savedArr)
+    const user={...userObj, saved: savedArr}
+    this.setState({user})
   }
 
   handleUserLogout=()=>{
+    window.localStorage.removeItem('loggedInUser')
     this.setState({user: null})
-    window.localStorage.removeItem('jwt')
-    setAxiosAuthToken(null)
   }
-//login check jwt pull user info from backend
-async componentDidMount(){
-  const currentUser = localStorage.getItem('loggedInUser')
-  const userSavedArr = localStorage.getItem('loggedInUserSaved') || []
-  if(currentUser){
-    try {
-      this.setState({
-        user: {
-          username: currentUser.username,
-          email: currentUser.email,
-          id: currentUser.id,
-          saved: userSavedArr,
-          firstName: currentUser.firstName,
-          lastName: currentUser.lastName
-        }
-      })
-    } catch (error) {
-      console.log(error)
+  async componentDidMount(){
+    if(!this.state.user){
+    const currentUser = localStorage.getItem('loggedInUser')
+    const savedArticles = JSON.parse(localStorage.getItem('savedArticles')) || []
+    
+    
+    if(currentUser){
+      const parsed = JSON.parse(currentUser)
+      const userSaved = savedArticles.filter(e=>e.username === parsed.username) || []
+      const user = {...parsed, saved: userSaved}
+      this.setState({user})
     }
   }
-}
-//saved and favorites functions
-addSaved =async(article)=>{
-  
-}
-deleteSaved = async(url)=>{
-  try {
-    const article=this.state.user.saved.find(e=>e.url===url)
-    const deleted = await Axios.put(`/delete-saved/${this.state.user.id}/${article._id}`)
-    console.log(deleted)
-    const saved=[...this.state.user.saved]
-    const updateSaved=saved.filter(i=> 
-      {
-        if(i.url !== url){
-          return i
-        }
-      }
-    )
-    const user={...this.state.user, saved: updateSaved}
-    this.setState({user})
-  } catch (error) {
-    console.log(error)
   }
-}
+
+
+
+  //saved and favorites functions
+  addSaved =async(article)=>{
+    const username = this.state.user.username
+    const saveArticle = {...article, username}
+    const savedArticles = JSON.parse(localStorage.getItem('savedArticles')) || []
+    if(savedArticles.some(e=>e.url === article.url && e.username === username)){
+      toast.error('Article already saved')
+      return
+    }
+    savedArticles.push(saveArticle)
+    localStorage.setItem('savedArticles', JSON.stringify(savedArticles))
+    const user = {...this.state.user, saved: [...this.state.user.saved, saveArticle]}
+    this.setState({user})
+  }
+  deleteSaved = async(url)=>{
+    const savedArticles = JSON.parse(localStorage.getItem('savedArticles')) || []
+    const updateSaved = savedArticles.filter(i=>{
+      if(i.url !== url && i.username === this.state.user.username){
+        return i
+      }
+    })
+    localStorage.setItem('savedArticles', JSON.stringify(updateSaved))
+    const user = {...this.state.user, saved: updateSaved}
+    this.setState({user})
+  }
+
   render() {
     return (
       <>

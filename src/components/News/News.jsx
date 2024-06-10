@@ -15,29 +15,37 @@ export class News extends Component {
     handleOnChange=(e)=>{
       this.setState({searchInput: e.target.value})
     }
-
     handleOnSubmit =async(e)=>{
       e.preventDefault()
-      try {
-        let foundArticles = await axios.get(`https://newsapi.org/v2/everything?q=${this.state.searchInput}&apiKey=${import.meta.env.VITE_NEWS_KEY}&language=en`)
-        this.setState({newsList: foundArticles.data.articles, searchInput: "" })
-
-        console.log(foundArticles)
-      } catch (error) {
-        console.log(error)
-      }
+      const apikey = import.meta.env.VITE_NEWS_KEY
+      const url = `https://gnews.io/api/v4/search?q=${this.state.searchInput}&lang=en&country=us&max=10&apikey=${apikey}`
+        fetch(url)
+        .then(res=>res.json())
+        .then(data=>{
+          console.log(data)
+          if(data.articles){
+            this.setState({newsList: data.articles, searchInput: ""})
+          }
+          })
     }
 
-    // async componentDidMount(){
-    //   this.setState({isLoaded: true})
-    //     try {
-    //        const starterNewsList=  await axios.get(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${import.meta.env.VITE_NEWS_KEY}`)
-    //       console.log(starterNewsList.data)
-    //       this.setState({newsList: starterNewsList.data.articles})
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
+    async componentDidMount(){
+      this.setState({isLoaded: true})
+      const apikey = import.meta.env.VITE_NEWS_KEY
+      const category = 'general'
+      const url = 'https://gnews.io/api/v4/top-headlines?category=' + category + '&lang=en&country=us&max=10&apikey=' + apikey;
+          fetch(url)
+          .then(res=>res.json())
+          .then(data=>{
+            console.log(data);
+            if(data.articles){
+              this.setState({newsList: data.articles})
+            }
+          })
+        
+    }
+
+
 
     render() {
       return (

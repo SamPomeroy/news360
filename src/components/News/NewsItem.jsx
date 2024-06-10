@@ -6,17 +6,24 @@ export class NewsItem extends Component {
     showModal: false,
 
   }
+  makeDate = (date) => {
+    const d = new Date(date)
+    return d.toDateString()
+  }
+
   render() {
     return (
       <>
         {this.props.article&&<Card className='mt-2' onClick={()=>this.setState({showModal: true})} style={{width: '50vw'}}>
-          <Card.Img variant="top" src={this.props.article.urlToImage}/>
+          <Card.Img variant="top" src={this.props.article.image}/>
           <Card.Body>
             <Card.Title>
               {this.props.article.title}
             </Card.Title>
             <Card.Subtitle>
-              {this.props.article.author}
+              {this.props.article.source.name}
+              <br></br>
+              {this.makeDate(this.props.article.publishedAt)}
             </Card.Subtitle>
             <a href={this.props.article.url}>
             <Card.Text>

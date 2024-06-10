@@ -1,9 +1,8 @@
-import checkIfUserIsAuth from './utils/checkIfUserIsAuth'
 import {Navigate} from 'react-router-dom'
 
-
+const loggedIn=localStorage.getItem('loggedInUser')
 const PrivateRoute = ({children}) => {
-  if(checkIfUserIsAuth()){
+  if(loggedIn){
     return children
   }else{
     return <Navigate to='/login'/>

@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-import axios from 'axios'
-import {jwtDecode} from 'jwt-decode'
 import {toast} from 'react-toastify'
 import { Button, Container, Form } from 'react-bootstrap'
 
@@ -15,20 +13,21 @@ export class Login extends Component {
     }
     handleOnSubmit=async (event)=>{
         event.preventDefault()
-        const allUsers = JSON.parse(localStorage.getItem('allUsers')) || []
-        const allSavedArrays = JSON.parse(localStorage.getItem('allSavedArrays')) || []
-        const foundUser = allUsers.find(user=>user.username === this.state.username && user.password === this.state.password)
-        const userSavedArr = allSavedArrays.find(e=>e.username === foundUser.username) || []
-      
-        if(foundUser){
-
-            localStorage.setItem('loggedInUser', foundUser)
-            localStorage.setItem('loggedInUserSaved', userSavedArr)
-            this.props.handleUserLogin(foundUser, userSavedArr.saved)
-            toast.success('user logged in')
-        }
-        else {
-            toast.error('username and password do not match')
+        try {
+            const allUsers = JSON.parse(localStorage.getItem('allUsers')) || []
+            const user = allUsers.find(user=>user.username === this.state.username && user.password === this.state.password)
+            if(!user){
+                toast.error('Username or password is incorrect')
+                return
+            }
+            const savedArticles = JSON.parse(localStorage.getItem('savedArticles')) || []
+            const userSaved = savedArticles.filter(e=>e.username === user.username) || []
+            localStorage.setItem('loggedInUser', JSON.stringify(user))
+            this.props.handleUserLogin(user, userSaved)
+            
+        } catch (error) {
+            console.log(error)
+            
         }
     }
   render() {

@@ -3,6 +3,7 @@ import {isAlpha, isAlphanumeric, isEmail, isStrongPassword} from 'validator'
 import {toast} from 'react-toastify'
 import axios from 'axios'
 import { Button, Col, Container, Form, Row } from 'react-bootstrap'
+import {v4 as uuid} from 'uuid'
 
 export class SignUp extends Component {
     state={
@@ -62,7 +63,6 @@ export class SignUp extends Component {
 
     handleOnSubmit = async (event) =>{
         event.preventDefault()
-        console.log(this.state.firstName)
         try {
             const {
                 firstName,
@@ -71,26 +71,16 @@ export class SignUp extends Component {
                 email,
                 password
             } = this.state
-            const allUsers = JSON.parse(localStorage.getItem('allUsers')) || []
-            const existingUser = allUsers.find(e => e.username === username)
-            if(existingUser){
-                toast.error('user already exists')
-                
+            const savedUsers = JSON.parse(localStorage.getItem('allUsers')) || []
+            if(savedUsers.some(e=>e.username === username)){
+                toast.error('username already exists')
                 return
             }
-            const user = {
-                firstName,
-                lastName,
-                email,
-                username,
-                password
-                
-            }
-
-            allUsers.push(user)
-            localStorage.setItem('allUsers', JSON.stringify(allUsers))
+            const id = uuid()
+            const user = {firstName, lastName, email, username, password, id }
+            savedUsers.push(user)
+            localStorage.setItem('allUsers', JSON.stringify(savedUsers))
            toast.success('User created')
-           
         this.setState({
             firstName: '',
             lastName: '',
@@ -101,10 +91,11 @@ export class SignUp extends Component {
         })
     }
     catch (error) {
-        console.log(error.message)
+        console.log(error)
         // toast.error(error.response.data.message)
     }
 }
+
     handleOnChange = (event)=>{
         this.setState({
             [event.target.name]: event.target.value
