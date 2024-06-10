@@ -42,6 +42,10 @@ export class App extends Component {
 
 
   //saved and favorites functions
+
+  deleteFavorite=()=>{
+
+  }
   addSaved =async(article)=>{
     const username = this.state.user.username
     const saveArticle = {...article, username}
@@ -77,6 +81,8 @@ export class App extends Component {
       handleUserLogout = {this.handleUserLogout}
       addFavorites={this.addFavorites}
       addSaved={this.addSaved}
+      deleteSaved={this.deleteSaved}
+      deleteFavorite={this.deleteFavorite}
       />
       </>
     )
