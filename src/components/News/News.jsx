@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import axios from 'axios'
 import NewsList from './NewsList'
 import {Audio} from 'react-loader-spinner'
 import { Button, Form, InputGroup } from 'react-bootstrap'

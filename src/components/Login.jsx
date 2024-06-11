@@ -23,7 +23,7 @@ export class Login extends Component {
             const savedArticles = JSON.parse(localStorage.getItem('savedArticles')) || []
             const userSaved = savedArticles.filter(e=>e.username === user.username) || []
             localStorage.setItem('loggedInUser', JSON.stringify(user))
-            this.props.handleUserLogin(user, userSaved)
+            this.props.handleUserLogin(user, savedArticles)
             
         } catch (error) {
             console.log(error)

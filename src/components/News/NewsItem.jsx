@@ -32,7 +32,7 @@ export class NewsItem extends Component {
             </a>
           </Card.Body>
           <Card.Footer>
-              {this.props.user.saved.some(e=>e.url==this.props.article.url)?<Button 
+              {this.props.user.saved.find(e=>e.url==this.props.article.url)?<Button 
               onClick={()=>{this.props.deleteSaved(this.props.article.url)}} variant='success'>Remove from Saved</Button>:<Button onClick={()=>{this.props.addSaved(this.props.article)}} 
               variant='success'>Add to Saved
               </Button>}
